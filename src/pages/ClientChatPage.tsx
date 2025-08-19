@@ -32,7 +32,7 @@ const ClientChatPage: React.FC = () => {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch('http://localhost:5000/api/client/support/messages', {
+    fetch('/api/client/support/messages', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(r => r.json())
