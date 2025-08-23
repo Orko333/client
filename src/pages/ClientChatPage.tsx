@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import socketService from '../services/socketService';
 import { useAuth } from '../state/AuthContext';
+import { baseURL } from '../api/client';
 
 interface SupportMessage {
   id?: number;
@@ -32,7 +33,7 @@ const ClientChatPage: React.FC = () => {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch('http://localhost:5000/api/client/support/messages', {
+  fetch(`${baseURL}/api/client/support/messages`, {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(r => r.json())

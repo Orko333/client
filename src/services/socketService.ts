@@ -1,4 +1,5 @@
 import { io, Socket } from 'socket.io-client';
+import { baseURL } from '../api/client';
 
 class SocketService {
   private socket: Socket | null = null;
@@ -8,7 +9,9 @@ class SocketService {
     if (this.socket?.connected) return;
     
     this.token = token;
-    this.socket = io('http://localhost:5000', {
+  // Use baseURL from client api (comes from VITE_API_URL or default)
+  const url = baseURL.replace(/\/$/, '');
+  this.socket = io(url, {
       auth: { token },
       transports: ['websocket', 'polling']
     });

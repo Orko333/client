@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import socketService from '../services/socketService';
+import { baseURL } from '../api/client';
 
 interface UserTokenPayload { user_id: number; username: string; exp: number; }
 interface AuthContextValue {
@@ -35,7 +36,7 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
   }, [token]);
 
   const loginWithTelegram = async (telegramData: Record<string, any>) => {
-    const res = await fetch('http://localhost:5000/api/client/auth-telegram', {
+  const res = await fetch(`${baseURL}/api/client/auth-telegram`, {
       method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(telegramData)
     });
     const data = await res.json();
@@ -54,21 +55,21 @@ export const AuthProvider: React.FC<{children: React.ReactNode}> = ({children}) 
 
   // Placeholders for upcoming email auth implementation
   const loginWithEmail = async (email: string, password: string) => {
-    const res = await fetch('http://localhost:5000/api/client/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
+  const res = await fetch(`${baseURL}/api/client/login`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, password }) });
     const data = await res.json();
     if (!res.ok || !data.token) throw new Error(data.message || 'Auth failed');
     localStorage.setItem('client_token', data.token);
     setToken(data.token);
   };
   const registerWithEmail = async (email: string, username: string, password: string) => {
-    const res = await fetch('http://localhost:5000/api/client/register', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, username, password }) });
+  const res = await fetch(`${baseURL}/api/client/register`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ email, username, password }) });
     const data = await res.json();
     if (!res.ok || !data.token) throw new Error(data.message || 'Registration failed');
     localStorage.setItem('client_token', data.token);
     setToken(data.token);
   };
   const loginWithGoogle = async (idToken: string) => {
-    const res = await fetch('http://localhost:5000/api/client/auth-google', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id_token: idToken }) });
+  const res = await fetch(`${baseURL}/api/client/auth-google`, { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ id_token: idToken }) });
     const data = await res.json();
     if (!res.ok || !data.token) throw new Error(data.message || 'Google auth failed');
     localStorage.setItem('client_token', data.token);
