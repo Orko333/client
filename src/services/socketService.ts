@@ -1,5 +1,4 @@
 import { io, Socket } from 'socket.io-client';
-import { baseURL } from '../api/client';
 
 class SocketService {
   private socket: Socket | null = null;
@@ -9,7 +8,7 @@ class SocketService {
     if (this.socket?.connected) return;
     
     this.token = token;
-  this.socket = io(baseURL, {
+    this.socket = io('http://localhost:5000', {
       auth: { token },
       transports: ['websocket', 'polling']
     });

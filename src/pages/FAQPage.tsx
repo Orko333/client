@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { useFetch } from '../hooks/useFetch';
 import { usePageTitle } from '../hooks/usePageTitle';
 
@@ -12,10 +11,6 @@ export default function FAQPage() {
   usePageTitle('Часті запитання – StudentWorks');
 
   const toggle = (k: string) => setOpen(prev => prev === k ? null : k);
-
-  // Navigate to support chat page
-  const navigate = useNavigate();
-  const openSupport = () => navigate('/support');
 
   return (
     <div className="space-y-12 animate-fade-in">
@@ -177,12 +172,7 @@ export default function FAQPage() {
               Зв'яжіться з нами будь-яким зручним способом.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <button
-                type="button"
-                onClick={openSupport}
-                className="btn-primary px-6 py-3"
-                aria-label="Написати в чат"
-              >
+              <button className="btn-primary px-6 py-3">
                 💬 Написати в чат
               </button>
             </div>

@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useRef } from 'react';
 import socketService from '../services/socketService';
 import { useAuth } from '../state/AuthContext';
-import { baseURL } from '../api/client';
 
 interface SupportMessage {
   id?: number;
@@ -33,7 +32,7 @@ const ClientChatPage: React.FC = () => {
   useEffect(() => {
     if (!token) return;
     setLoading(true);
-    fetch(`${baseURL}/api/client/support/messages`, {
+    fetch('http://localhost:5000/api/client/support/messages', {
       headers: { 'Authorization': `Bearer ${token}` }
     })
       .then(r => r.json())
@@ -71,7 +70,7 @@ const ClientChatPage: React.FC = () => {
     };
   }, [token]);
 
-  const send = async () => {
+  const send = () => {
     if (!input.trim() || !token) return;
     const text = input.trim();
     const clientId = `c_${Date.now()}_${Math.random().toString(36).slice(2,8)}`;
@@ -87,28 +86,12 @@ const ClientChatPage: React.FC = () => {
     scrollBottom();
     setSending(true);
     try {
-      if (socketService.isConnected) {
-        socketService.sendUserMessage(text, clientId);
-        // If socket confirms via event, handler will reconcile the optimistic message.
-        // Fallback timeout: if not confirmed in 8s mark failed
-        setTimeout(() => {
-          setMessages(prev => prev.map(m => m.client_message_id === clientId && m.pending ? { ...m, pending: false, failed: true } : m));
-        }, 8000);
-      } else {
-        // Socket not connected - fallback to REST POST
-        const res = await fetch(`${baseURL}/api/client/support/messages`, {
-          method: 'POST',
-          headers: { 'Authorization': `Bearer ${token}`, 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text, client_message_id: clientId })
-        });
-        if (!res.ok) {
-          setMessages(prev => prev.map(m => m.client_message_id === clientId ? { ...m, pending: false, failed: true } : m));
-        } else {
-          const saved: SupportMessage = await res.json();
-          setMessages(prev => prev.map(m => m.client_message_id === clientId ? { ...m, ...saved, pending: false, failed: false } : m));
-        }
-      }
-    } catch (err) {
+      socketService.sendUserMessage(text, clientId);
+      // Fallback timeout: if not confirmed in 8s mark failed
+      setTimeout(() => {
+        setMessages(prev => prev.map(m => m.client_message_id === clientId && m.pending ? { ...m, pending: false, failed: true } : m));
+      }, 8000);
+    } catch {
       setMessages(prev => prev.map(m => m.client_message_id === clientId ? { ...m, pending: false, failed: true } : m));
     } finally {
       setSending(false);

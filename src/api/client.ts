@@ -1,12 +1,7 @@
 import axios from 'axios';
 
 // Централізована база URL (можна змінити через Vite env: VITE_API_URL)
-// Normalize VITE_API_URL: if it's set but missing protocol, prefix with https://
-const rawApiUrl = (import.meta as any).env?.VITE_API_URL;
-let baseURL = rawApiUrl || 'http://localhost:5000';
-if (rawApiUrl && !/^https?:\/\//i.test(rawApiUrl)) {
-  baseURL = `https://${rawApiUrl}`;
-}
+const baseURL = (import.meta as any).env?.VITE_API_URL || 'http://localhost:5000';
 
 const api = axios.create({ baseURL });
 
